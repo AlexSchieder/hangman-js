@@ -2,18 +2,17 @@
 ToDo:
 - Get word -> random word from api -> show unrevealed "word"
 	- categories / word length adjastable ?
-- Guess letters: 
-	- input: key is pressed + virtual keyboard
-	- check if letter has been tried + display all submitted letters
-	- check if word incluedes letter and where
 - lives: 
 	- display lives and update them
 	- visual hangman ?
 */
+
 const wordBox = document.getElementById('word');
 const submittedLettersList = document.getElementById('submittedLetters')
-const livesBox = document.getElementById('lives')
-let lives = 10;
+const lifesBox = document.querySelector('#lifes p span')
+const popUpWrap = document.querySelector('.popup-wrapper')
+
+let lifes = 10;
 let occurrence = [];
 let submittedLetters = [];
 let solvedLetters = [];
@@ -46,14 +45,19 @@ function renderWord(word) {
 }
 
 function wrongLetter(letter) {
-	console.log(`there is no ${letter} in this word`);
+	alert(`There is no ${letter} in this word.`)
+	lifes -= 1
+	renderLife()
 }
 
+function renderLife() {
+	lifesBox.innerText = lifes
+}
 
 
 function checkLetter(letter, word) {
 	if (submittedLetters.includes(letter)) {
-		console.log(`You already tried ${letter}.`)
+		alert(`You already tried ${letter}.`)
 	} else {
 		submittedLetters.push(letter)
 		submittedLettersList.insertAdjacentHTML('beforeend', `<li>${letter}</li>`)
@@ -66,8 +70,6 @@ function checkLetter(letter, word) {
 				solvedLetters.push(word.indexOf(letter, position))
 				position = word.indexOf(letter, position +1)
 			}
-			console.log(occurrence)
-			//return occurrence
 			renderLetter(letter, occurrence, word)
 			occurrence = [];
 		} else {
@@ -78,13 +80,14 @@ function checkLetter(letter, word) {
 
 function renderLetter(letter, occurrence, word) {
 	let letters = document.querySelectorAll('.letter')
-	//console.log(letters)
 	for (let i = 0; i < occurrence.length; i++) {
 		let j = occurrence[i]
 		letters[j].innerHTML = `<span>${letter}</span>`
 	}
 	if(solvedLetters.length == word.length) {
-		console.log('word solved')
+		popUpWrap.classList.remove('hidden')
+		popUpWrap.focus()
+		//console.log('word solved')
 	}
 }
 
@@ -104,7 +107,8 @@ document.getElementById('newWord').addEventListener('click', restart)
 function reset () {
 	wordBox.innerHTML = ''
 	submittedLettersList.innerHTML = ''
-	lives = 10;
+	lifes = 10;
+	renderLife()
 	occurrence = [];
 	submittedLetters = [];
 	solvedLetters = [];
@@ -114,7 +118,6 @@ function restart() {
 	reset()
 	getWord()
 	.then(newWord => {
-		//localStorage.setItem('word', newWord.word)
 		console.log(newWord.word)
 		renderWord(newWord.word)
 		listenForLetter(newWord.word)

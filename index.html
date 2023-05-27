@@ -10,9 +10,19 @@
 <body>
 	<h1>hangman game</h1>
 	<div id="word"></div>
-	<ul id="submittedLetters"></ul>
-	<div id="lives"></div>
-	<button id="newWord">new word</button>
+	<div class="submittedLetters">
+		<p>You already submitted this letters:</p>
+		<ul id="submittedLetters"></ul>
+	</div>
+	<div id="lifes">
+		<p><span>10</span> Lifes left</p>
+	</div>
+	<div class="popup-wrapper hidden">
+		<div class="pop-up">
+			<p>Hurray! You solved this word!</p>
+			<button id="newWord">new word</button>
+		</div>
+	</div>
 	<div id="keyboard">
 		<div class="row">
 			<button>q</button><button>w</button><button>e</button><button>r</button><button>t</button><button>z</button><button>u</button><button>i</button><button>o</button><button>p</button><button>ü</button>
