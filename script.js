@@ -15,8 +15,29 @@ const submittedLettersList = document.getElementById('submittedLetters')
 const livesBox = document.getElementById('lives')
 let lives = 10;
 let occurrence = [];
-const word = localStorage.getItem('word' || '');
+let submittedLetters = [];
+let solvedLetters = [];
 
+//virtual Keyboard
+const buttons = document.querySelectorAll('#keyboard button');
+const keyboard = document.getElementById('keyboard');
+const reg = /[a-z]/
+
+function listenForLetter(word) {
+	for (let button of buttons) {
+		button.addEventListener('click', () => {
+			checkLetter(button.innerText, word)
+		})
+	}
+	
+	document.body.addEventListener('keydown', (e) => {
+		if (reg.test(e.key)) {
+			checkLetter(e.key, word)
+		}
+	})
+}
+
+// virtual keyboard end
 
 function renderWord(word) {
 	for (let i = 0; i < word.length; i++) {
@@ -29,29 +50,41 @@ function wrongLetter(letter) {
 }
 
 
+
 function checkLetter(letter, word) {
-	// check if letter exists in word
-	if (word.indexOf(letter) !== -1) {
-		// check where letter exists in word
-		let position = word.indexOf(letter)
-		while(position !== -1) {
-			occurrence.push(word.indexOf(letter, position))
-			position = word.indexOf(letter, position +1)
-		}
-		console.log(occurrence)
-		//return occurrence
-		renderLetter(letter, occurrence)
+	if (submittedLetters.includes(letter)) {
+		console.log(`You already tried ${letter}.`)
 	} else {
-		wrongLetter(letter)
+		submittedLetters.push(letter)
+		submittedLettersList.insertAdjacentHTML('beforeend', `<li>${letter}</li>`)
+		// check if letter exists in word
+		if (word.indexOf(letter) !== -1) {
+			// check where letter exists in word
+			let position = word.indexOf(letter)
+			while(position !== -1) {
+				occurrence.push(word.indexOf(letter, position))
+				solvedLetters.push(word.indexOf(letter, position))
+				position = word.indexOf(letter, position +1)
+			}
+			console.log(occurrence)
+			//return occurrence
+			renderLetter(letter, occurrence, word)
+			occurrence = [];
+		} else {
+			wrongLetter(letter)
+		}
 	}
 }
 
-function renderLetter(letter, occurrence) {
+function renderLetter(letter, occurrence, word) {
 	let letters = document.querySelectorAll('.letter')
-	console.log(letters)
+	//console.log(letters)
 	for (let i = 0; i < occurrence.length; i++) {
 		let j = occurrence[i]
 		letters[j].innerHTML = `<span>${letter}</span>`
+	}
+	if(solvedLetters.length == word.length) {
+		console.log('word solved')
 	}
 }
 
@@ -66,11 +99,27 @@ async function getWord() {
 	return newWord;
 }
 
-getWord()
+document.getElementById('newWord').addEventListener('click', restart)
+
+function reset () {
+	wordBox.innerHTML = ''
+	submittedLettersList.innerHTML = ''
+	lives = 10;
+	occurrence = [];
+	submittedLetters = [];
+	solvedLetters = [];
+}
+
+function restart() {
+	reset()
+	getWord()
 	.then(newWord => {
-		localStorage.setItem('word', newWord.word)
-		console.log(word)
-		renderWord(word)
-		checkLetter('e', word)
+		//localStorage.setItem('word', newWord.word)
+		console.log(newWord.word)
+		renderWord(newWord.word)
+		listenForLetter(newWord.word)
 	})
 	.catch(error => error.message)
+}
+
+restart()

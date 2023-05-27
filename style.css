@@ -10,3 +10,19 @@
 	display: inline-block;
 	margin: 0.5em;
 }
+
+#keyboard {
+	margin: 0 auto;
+	width: max-content
+}
+
+#keyboard .row {
+	width: max-content;
+	margin: 0 auto;
+}
+
+#keyboard button {
+  width: 2em;
+  height: 2em;
+  margin: 0.2em;
+}
