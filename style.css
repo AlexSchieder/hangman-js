@@ -1,0 +1,12 @@
+* {
+	box-sizing: border-box;
+}
+
+.letter {
+	width: 3em;
+	height: 3em;
+	background: lightblue;
+	border-radius: 0.5em;
+	display: inline-block;
+	margin: 0.5em;
+}
