@@ -4,7 +4,6 @@ const lifesBox: HTMLElement | null = document.querySelector('#lifes p span')
 const dialog: HTMLDialogElement | null = document.getElementsByTagName('dialog')[0]
 
 let life: number = 10
-let word: string = '';
 let failedLetters: string[] = [];
 let submittedLetters: string[] = [];
 let occurrence: number[] = [];
@@ -47,11 +46,10 @@ function renderDialog(message: string, button: string, finished?: boolean) {
 			</menu>
 		</form>`
 
-		if (!dialog.open) {
-			dialog.showModal()
-			if (finished) {
-				dialog.addEventListener('close', restart)
-			}
+		if (!dialog.open) dialog.showModal()
+		if (finished) {
+			console.log('restart')
+			dialog.addEventListener('close', restart)
 		}
 	}
 }
@@ -66,6 +64,7 @@ function wrongLetter(letter: string) {
 	renderDialog(`There is no ${letter} in this word.`, 'ok')
 	updateLife(1)
 	updateFailedLetter(letter)
+	if(!life) renderDialog(`You run out of lifes.`, 'try again', true)
 }
 
 function checkLetter(letter: string, word: string) {
@@ -118,25 +117,22 @@ async function getWord() {
 
 function reset () {
 	if(wordBox && failedLettersList) {
-		localStorage.clear()
 		life = 10;
 		wordBox.innerHTML = ''
 		failedLettersList.innerHTML = ''
 		updateLife(0)
-		occurrence = [];
-		localStorage.setItem('submittedLetters', '[]')
-		localStorage.setItem('failedLetters', '[]')
-		solvedLetters = [];
+		occurrence = []
+		submittedLetters = []
+		failedLetters = []
+		solvedLetters = []
 	}
 }
 
 function restart() {
-	if(!word)
 	reset()
 	getWord()
 	.then(newWord => {
 		console.log(newWord.word)
-		word = newWord.word;
 		renderWord(newWord.word)
 		listenForLetter(newWord.word)
 	})

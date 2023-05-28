@@ -8,15 +8,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const wordBox = document.getElementById('word');
-const submittedLettersList = document.getElementById('submittedLetters');
+const failedLettersList = document.getElementById('submittedLetters');
 const lifesBox = document.querySelector('#lifes p span');
 const dialog = document.getElementsByTagName('dialog')[0];
-let lifes = 10;
-let occurrence = [];
+let life = 10;
+let failedLetters = [];
 let submittedLetters = [];
+let occurrence = [];
 let solvedLetters = [];
 const buttons = document.querySelectorAll('#keyboard button');
 const keyboard = document.getElementById('keyboard');
+function updateLife(num) {
+    life -= num;
+    if (lifesBox)
+        lifesBox.innerText = `${life}`;
+}
+function updateFailedLetter(letter) {
+    failedLetters.push(letter);
+    if (failedLettersList) {
+        failedLettersList.insertAdjacentHTML('beforeend', `<li>${letter}</li>`);
+    }
+}
 function listenForLetter(word) {
     for (let button of buttons) {
         button.addEventListener('click', () => checkLetter(button.innerText, word));
@@ -36,11 +48,11 @@ function renderDialog(message, button, finished) {
 				<button>${button}</button>
 			</menu>
 		</form>`;
-        if (!dialog.open) {
+        if (!dialog.open)
             dialog.showModal();
-            if (finished) {
-                dialog.addEventListener('close', restart);
-            }
+        if (finished) {
+            console.log('restart');
+            dialog.addEventListener('close', restart);
         }
     }
 }
@@ -52,23 +64,20 @@ function renderWord(word) {
 }
 function wrongLetter(letter) {
     renderDialog(`There is no ${letter} in this word.`, 'ok');
-    lifes -= 1;
-    renderLife();
-}
-function renderLife() {
-    if (lifesBox)
-        lifesBox.innerText = `${lifes}`;
+    updateLife(1);
+    updateFailedLetter(letter);
+    if (!life)
+        renderDialog(`You run out of lifes.`, 'try again', true);
 }
 function checkLetter(letter, word) {
     if (submittedLetters.includes(letter)) {
         renderDialog(`You already tried ${letter}.`, 'ok');
     }
-    else if (dialog && submittedLettersList) {
+    else if (dialog) {
         if (dialog.open) {
             dialog.close();
         }
         submittedLetters.push(letter);
-        submittedLettersList.insertAdjacentHTML('beforeend', `<li>${letter}</li>`);
         // check if letter exists in word
         if (word.indexOf(letter) !== -1) {
             // check where letter exists in word
@@ -108,13 +117,14 @@ function getWord() {
     });
 }
 function reset() {
-    if (wordBox && submittedLettersList) {
+    if (wordBox && failedLettersList) {
+        life = 10;
         wordBox.innerHTML = '';
-        submittedLettersList.innerHTML = '';
-        lifes = 10;
-        renderLife();
+        failedLettersList.innerHTML = '';
+        updateLife(0);
         occurrence = [];
         submittedLetters = [];
+        failedLetters = [];
         solvedLetters = [];
     }
 }
