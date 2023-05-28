@@ -11,6 +11,15 @@ body {
 	margin: 0;
 }
 
+button {
+	cursor: pointer;
+	border-radius: 0.3em;
+	box-shadow: inset 0 2px 4px 0 rgb(0 0 0/0.05);
+	display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #word {
 	display: flex;
 	flex-wrap: wrap;
@@ -32,13 +41,11 @@ body {
 .info {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 2em;
-	align-items: center;
-	justify-content: space-around;
+	justify-content: space-evenly;
 }
 
 .submittedLetters {
-	width: 30em;
+	width: 21em;
 	background: #E0F4F6;
 	border-radius: 0.5em;
 	padding: 0.5em;
@@ -56,7 +63,10 @@ body {
 
 #lifes {
 	font-size: 1.3em;
-	height: max-content;
+}
+
+#lifes p {
+	margin: 1em;
 }
 
 #keyboard {
@@ -73,6 +83,14 @@ body {
   width: 2.2em;
   height: 2.2em;
   margin: 0.2em;
+	background: #C6CFD2;
+	cursor: pointer;
+	border: transparent;
+}
+
+#keyboard button:hover,
+#keyboard button:focus {
+	background: #9FBCC1;
 }
 
 dialog {
@@ -100,6 +118,11 @@ dialog button {
 	background-color: #B1E4E7;
 	border: 0.12rem solid #30343F;
 	border-radius: 0.5em;
+}
+
+dialog button:hover,
+dialog button:focus {
+	background-color: #A1DFE2;
 }
 
 dialog p {
