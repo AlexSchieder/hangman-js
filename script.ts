@@ -61,7 +61,7 @@ function renderWord(word: string) {
 }
 
 function wrongLetter(letter: string) {
-	renderDialog(`There is no ${letter} in this word.`, 'ok')
+	renderDialog(`There is no '${letter}' in this word.`, 'ok')
 	updateLife(1)
 	updateFailedLetter(letter)
 	if(!life) renderDialog(`You run out of lifes.`, 'try again', true)
@@ -69,7 +69,7 @@ function wrongLetter(letter: string) {
 
 function checkLetter(letter: string, word: string) {
 	if (submittedLetters.includes(letter)) {
-		renderDialog(`You already tried ${letter}.`, 'ok')
+		renderDialog(`You already tried '${letter}'.`, 'ok')
 	} else if(dialog) {
 		if (dialog.open) { dialog.close() }
 		submittedLetters.push(letter);
