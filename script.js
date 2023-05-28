@@ -1,16 +1,7 @@
-/*
-ToDo:
-- Get word -> random word from api -> show unrevealed "word"
-	- categories / word length adjastable ?
-- lives: 
-	- display lives and update them
-	- visual hangman ?
-*/
-
 const wordBox = document.getElementById('word');
 const submittedLettersList = document.getElementById('submittedLetters')
 const lifesBox = document.querySelector('#lifes p span')
-const popUpWrap = document.querySelector('.popup-wrapper')
+const dialog = document.getElementById('dialog')
 
 let lifes = 10;
 let occurrence = [];
@@ -20,7 +11,7 @@ let solvedLetters = [];
 //virtual Keyboard
 const buttons = document.querySelectorAll('#keyboard button');
 const keyboard = document.getElementById('keyboard');
-const reg = /[a-z]/
+//const reg = /[a-z]/
 
 function listenForLetter(word) {
 	for (let button of buttons) {
@@ -30,11 +21,28 @@ function listenForLetter(word) {
 	}
 	
 	document.body.addEventListener('keydown', (e) => {
-		if (reg.test(e.key)) {
+		if (/\b[a-z]\b/.test(e.key) && !dialog.open) {
 			checkLetter(e.key, word)
 		}
 	})
 }
+
+function renderDialog(message, button, finished) {
+	dialog.innerHTML=`
+	<form method="dialog">
+		<p>${message}</p>
+		<menu>
+			<button>${button}</button>
+		</menu>
+	</form>`
+	if (!dialog.open) {
+		dialog.showModal()
+		if (finished) {
+			dialog.addEventListener('close', restart)
+		}
+	}
+}
+
 
 // virtual keyboard end
 
@@ -45,7 +53,7 @@ function renderWord(word) {
 }
 
 function wrongLetter(letter) {
-	alert(`There is no ${letter} in this word.`)
+	renderDialog(`There is no ${letter} in this word.`, 'ok')
 	lifes -= 1
 	renderLife()
 }
@@ -57,8 +65,9 @@ function renderLife() {
 
 function checkLetter(letter, word) {
 	if (submittedLetters.includes(letter)) {
-		alert(`You already tried ${letter}.`)
+		renderDialog(`You already tried ${letter}.`, 'ok')
 	} else {
+		if (dialog.open) { dialog.close() }
 		submittedLetters.push(letter)
 		submittedLettersList.insertAdjacentHTML('beforeend', `<li>${letter}</li>`)
 		// check if letter exists in word
@@ -85,9 +94,7 @@ function renderLetter(letter, occurrence, word) {
 		letters[j].innerHTML = `<span>${letter}</span>`
 	}
 	if(solvedLetters.length == word.length) {
-		popUpWrap.classList.remove('hidden')
-		popUpWrap.focus()
-		//console.log('word solved')
+		renderDialog('Hurra! You solved it.', 'New word', true)
 	}
 }
 
@@ -101,8 +108,6 @@ async function getWord() {
 	const newWord = await response.json()
 	return newWord;
 }
-
-document.getElementById('newWord').addEventListener('click', restart)
 
 function reset () {
 	wordBox.innerHTML = ''

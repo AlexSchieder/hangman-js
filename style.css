@@ -56,29 +56,3 @@ body {
   height: 2.2em;
   margin: 0.2em;
 }
-
-.popup-wrapper.hidden {
-	display: none;
-	visibility: hidden;
-}
-
-.popup-wrapper {
-	visibility: visible;
-	width: 100vw;
-	height: 100vh;
-	position: absolute;
-	left: 0;
-	top: 0;
-	display: grid;
-	place-items: center;
-}
-
-.pop-up {
-	background: lightgray;
-	min-height: 30vh;
-	min-width: 30vw;
-	margin: 0 auto;
-	padding: 4em;
-	border-radius: 1em;
-	box-shadow: 0 1px 3px 0 rgb(0 0 0/0.1),0 1px 2px -1px rgb(0 0 0/0.1);
-}
